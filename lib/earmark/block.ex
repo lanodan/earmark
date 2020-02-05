@@ -57,7 +57,7 @@ defmodule Earmark.Block do
   end
   defmodule ListItem do
     @moduledoc false
-    defstruct lnb: 0, attrs: nil, type: :ul, spaced: true, blocks: [], bullet: "" 
+    defstruct lnb: 0, attrs: nil, type: :ul, loose: false, spaced: true, blocks: [], bullet: "" 
   end
   defmodule Table do
     @moduledoc false

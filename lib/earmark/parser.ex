@@ -180,15 +180,9 @@ defmodule Earmark.Parser do
   # We handle lists in two passes. In the first, we build list items,
   # in the second we combine adjacent items into lists. This is pass one
 
-  defp _parse( [first = %Line.ListItem{type: type, initial_indent: initial_indent, content: content, bullet: bullet, lnb: lnb} | rest ], result, options) do
-    {spaced, list_lines, rest, _offset, indent_level} = read_list_lines(rest, opens_inline_code(first), initial_indent)
-
-    spaced = (spaced || blank_line_in?(list_lines)) && peek(rest, Line.ListItem, type)
-    lines = for line <- list_lines, do: indent_list_item_body(line, indent_level || 0, first.list_indent)
-    lines = [content | lines]
-    {blocks, _, options1} = parse(lines, %{options | line: lnb}, true)
-
-    _parse([%Line.Blank{lnb: 0} | rest], [ %Block.ListItem{type: type, blocks: blocks, spaced: spaced, bullet: bullet, lnb: lnb} | result ], options1)
+  defp _parse( [ %Line.ListItem{} | _ ] = lines, result, options) do
+    {list_item, rest, options1} = Earmark.Parser.ListParser.parse_list_item(lines, options)
+    _parse([%Line.Blank{lnb: 0} | rest], [ list_item | result ], options1)
   end
 
   #################
